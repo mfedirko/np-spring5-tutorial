@@ -1,5 +1,6 @@
 package com.naturalprogrammer.spring5tutorial.services;
 
+import com.naturalprogrammer.spring5tutorial.commands.DeleteUserCommand;
 import javax.mail.MessagingException;
 
 //import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -18,4 +19,6 @@ public interface UserService {
 	void resetPassword(String resetPasswordCode, String password);
 	User fetchById(Long userId);
 	void update(User oldUser, UserCommand userCommand);
+	boolean verifyPassword(String rawPass);
+	void deleteUser(DeleteUserCommand command);
 }

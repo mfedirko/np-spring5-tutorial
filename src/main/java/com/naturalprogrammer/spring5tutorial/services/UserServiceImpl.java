@@ -1,6 +1,6 @@
 package com.naturalprogrammer.spring5tutorial.services;
 
-import java.util.Arrays;
+import com.naturalprogrammer.spring5tutorial.commands.DeleteUserCommand;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
@@ -8,11 +8,11 @@ import java.util.UUID;
 import javax.annotation.PostConstruct;
 
 import javax.mail.MessagingException;
+import javax.validation.Validator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.event.EventListener;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -29,7 +29,10 @@ import com.naturalprogrammer.spring5tutorial.utils.MyUtils;
 @Service("userService")
 @Transactional(propagation=Propagation.SUPPORTS, readOnly=true)
 public class UserServiceImpl implements UserService {
-	
+
+	@Autowired
+	private Validator validator;
+
 	private static Log log = LogFactory.getLog(UserServiceImpl.class);
 	
 	@Value("${application.admin.email:admin@example.com}")
@@ -118,6 +121,22 @@ public class UserServiceImpl implements UserService {
 						+ user.getEmail() + " failed", e);
 			}
 		});
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
+	public void deleteUser( DeleteUserCommand command){
+		MyUtils.validated(command, validator);
+		User currentUser = MyUtils.currentUser().orElseThrow(() -> new RuntimeException("No user session found"));
+		userRepository.delete(currentUser);
+		MyUtils.afterCommit(() -> MyUtils.logout());
+	}
+
+
+	@Override
+	public boolean verifyPassword(String rawPass){
+		User current = MyUtils.currentUser().orElseThrow(() -> new RuntimeException("No user session found"));
+		return passwordEncoder.matches(rawPass,current.getPassword());
 	}
 
 	private void sendVerificationMail(User user) throws  javax.mail.MessagingException {
