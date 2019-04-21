@@ -48,11 +48,12 @@ class GlobalDefaultExceptionHandler {
     @ExceptionHandler(value = Throwable.class)
     public ModelAndView defaultErrorHandler(HttpServletRequest req, Exception e) throws Exception {
 
+        HttpStatus status = getStatus(req);
         // Otherwise setup and send the user to a default error-view.
         ModelAndView mav = new ModelAndView();
-        mav.addObject("status",getStatus(req).value());
+        mav.addObject("status",status.value());
         mav.addObject("message", (Optional.ofNullable(e).orElse(blankException())).getMessage());
-        mav.addObject("error", e.getClass().getName());
+        mav.addObject("error", Optional.ofNullable(status.getReasonPhrase()).orElse(e.getClass().getSimpleName()));
         mav.setViewName(DEFAULT_ERROR_VIEW);
         return mav;
     }
