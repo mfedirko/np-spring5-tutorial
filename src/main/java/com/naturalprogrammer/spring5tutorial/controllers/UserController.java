@@ -22,58 +22,57 @@ import com.naturalprogrammer.spring5tutorial.utils.MyUtils;
 @Controller
 @RequestMapping("/users")
 public class UserController {
-	
+
 	private UserService userService;
-	
+
 	public UserController(UserService userService) {
 		this.userService = userService;
 	}
-	
+
 	@GetMapping("/{verificationCode}/verify")
 	public String verify(@PathVariable String verificationCode,
 			RedirectAttributes redirectAttributes) {
-		
+
 		userService.verify(verificationCode);
 		MyUtils.flash(redirectAttributes, "success", "verificationSuccessful");
 		return "redirect:/";
 	}
-	
+
 	@GetMapping("/{userId}/resend-verification-mail")
-	public String resendVerificationMail(@PathVariable("userId") User user,
+	public String resendVerificationMail(@PathVariable("userId") Long user,
 			RedirectAttributes redirectAttributes) throws MessagingException {
-		
-		userService.resendVerificationMail(user);
+
+		userService.resendVerificationMail(userService.fetchById(user));
 		MyUtils.flash(redirectAttributes, "success", "verificationMailResent");
 		return "redirect:/";
 	}
-	
+
 	@GetMapping("/{userId}")
 	public String getById(@PathVariable Long userId, Model model) {
-		
+
 		model.addAttribute(userService.fetchById(userId));
 		return "user";
 	}
-	
+
 	@GetMapping("/{userId}/edit")
-	public String edit(@PathVariable("userId") User user, Model model) {
-		
-		model.addAttribute(user);
+	public String edit(@PathVariable("userId") Long user, Model model) {
+		model.addAttribute(userService.fetchById(user));
 		return "user-edit";
 	}
-	
+
 	@PostMapping("/{userId}/edit")
-	public String update(@PathVariable("userId") User oldUser,
+	public String update(@PathVariable("userId") Long oldUser,
 			@Validated(UpdateValidation.class)
 			@ModelAttribute("user") UserCommand userCommand,
 			BindingResult result,
 			RedirectAttributes redirectAttributes) {
-		
+
 		if (result.hasErrors())
 			return "user-edit";
-		
-		userService.update(oldUser, userCommand);
+
+		userService.update(userService.fetchById(oldUser), userCommand);
 		MyUtils.flash(redirectAttributes, "success", "updateUserSuccess");
 		return "redirect:/";
-	}	
+	}
 
 }
