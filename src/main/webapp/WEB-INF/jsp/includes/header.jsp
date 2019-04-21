@@ -2,6 +2,9 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+
+<c:set var="contextPath" value="${pageContext.request.contextPath}"/>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,7 +14,7 @@
     <title>Spring Framework Tutorial For Beginners</title>
 
     <!-- Bootstrap -->
-    <link href="/js/lib/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="${contextPath}/js/lib/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -20,9 +23,10 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]--></head>
     
-    <link href="/css/styles.css" rel="stylesheet">
+    <link href="${contextPath}/css/styles.css" rel="stylesheet">
     
 <body>
+
 
 <div class="container">
 	<nav class="navbar navbar-default">
@@ -64,11 +68,11 @@
 	      </form>
 	      <ul class="nav navbar-nav navbar-right">
 	      	<sec:authorize access="isAnonymous()">
-		        <li><a href="/signup">
+		        <li><a href="${contextPath}/signup">
 		        	<span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span>
 		        	Sign up</a>
 		        </li>
-		        <li><a href="/login">
+		        <li><a href="${contextPath}/login">
 		        	<span class="glyphicon glyphicon-log-in" aria-hidden="true"></span>
 		        	Login</a>
 		        </li>
@@ -83,13 +87,13 @@
 		          </a>
 		          <ul class="dropdown-menu">
 		            <li>
-		            	<a href="/users/<sec:authentication property='principal.id' />">
+		            	<a href="${contextPath}/users/<sec:authentication property='principal.id' />">
 		            		<span class="glyphicon glyphicon-user"></span>
 		            		Profile
 		            	</a>
 		            </li>
 		            <li>
-		            	<form:form id="logoutForm" action="/logout">
+		            	<form:form id="logoutForm" action="${contextPath}/logout">
 		            	</form:form>
 		            	<a href="#" onclick="document.getElementById('logoutForm').submit()">
 		            		<span class="glyphicon glyphicon-log-out"></span>
@@ -100,7 +104,7 @@
 		            <li><a href="#">Something else here</a></li>
 		            <sec:authorize access="hasRole('ADMIN')">
 			            <li role="separator" class="divider"></li>
-			            <li><a href="/admin">Admin</a></li>
+			            <li><a href="${contextPath}/admin">Admin</a></li>
 		            </sec:authorize>
 		          </ul>
 		        </li>

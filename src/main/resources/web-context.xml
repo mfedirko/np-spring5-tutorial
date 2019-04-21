@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <mvc:annotation-driven />
+    <!--<mvc:default-servlet-handler />-->
+    <mvc:view-controller path="/" view-name="home"/>
+    <mvc:view-controller path="/login" view-name="login"/>
+    <mvc:view-controller path="/admin" view-name="admin"/>
+    <mvc:resources mapping="/css/**" location="/resources/css/" />
+    <mvc:resources mapping="/js/**" location="/resources/js/" />
+    <context:component-scan base-package="com.naturalprogrammer.spring5tutorial.controllers" />
+    <context:component-scan base-package="com.naturalprogrammer.spring5tutorial.commands" />
+
+
+    <!--<mvc:view-controller path="/" view-name="index.html" />-->
+
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+        <property name="prefix" value="/WEB-INF/jsp/" />
+        <property name="suffix" value=".jsp" />
+    </bean>
+
+    <!--<bean id="appBaseFilter" class="com.naturalprogrammer.spring5tutorial.controllers.filter.ApplicationBaseFilter">-->
+        <!--<property name="applicationBasePath" value="${applicationDeployedUri}"></property>-->
+    <!--</bean>-->
+</beans>

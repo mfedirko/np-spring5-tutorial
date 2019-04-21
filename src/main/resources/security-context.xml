@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:sec="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/security https://www.springframework.org/schema/security/spring-security.xsd">
+
+    <import resource="classpath:property-config-context.xml"/>
+
+    <bean id="bcryptEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+
+    <bean id="rememberMeServices" class="org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices">
+        <constructor-arg index="0" value="${rememberMeKey}"/>
+        <constructor-arg index="1" ref="userDetailsService" />
+    </bean>
+
+    <bean id="rememberMeFilter" class=
+            "org.springframework.security.web.authentication.rememberme.RememberMeAuthenticationFilter">
+        <constructor-arg name="authenticationManager" ref="theAuthenticationManager"/>
+        <constructor-arg name="rememberMeServices" ref="rememberMeServices"/>
+    </bean>
+
+    <bean id="rememberMeAuthenticationProvider" class=
+            "org.springframework.security.authentication.RememberMeAuthenticationProvider">
+        <constructor-arg name="key" value="${rememberMeKey}"/>
+    </bean>
+
+    <sec:global-method-security pre-post-annotations="enabled"/>
+
+    <sec:authentication-manager alias="theAuthenticationManager">
+        <sec:authentication-provider user-service-ref="userDetailsService">
+            <sec:password-encoder ref="bcryptEncoder"/>
+        </sec:authentication-provider>
+        <sec:authentication-provider ref="rememberMeAuthenticationProvider"/>
+    </sec:authentication-manager>
+
+    <sec:http use-expressions="true">
+        <sec:intercept-url pattern="/css/**" method="GET" access="permitAll" />
+        <sec:intercept-url pattern="/js/**" method="GET" access="permitAll" />
+        <sec:intercept-url pattern="/images/**" method="GET" access="permitAll" />
+        <sec:intercept-url pattern="/actuator/health" method="GET" access="permitAll" />
+        <sec:intercept-url pattern="/actuator/info" method="GET" access="permitAll" />
+        <sec:intercept-url pattern="/users/*" method="GET" access="permitAll" />
+        <sec:intercept-url pattern="/forgot-password"  access="permitAll" />
+        <sec:intercept-url pattern="/reset-password/*"  access="permitAll" />
+        <sec:intercept-url pattern="/signup"  access="permitAll" />
+        <sec:intercept-url pattern="/admin/**"  access="hasAuthority('ROLE_ADMIN')" />
+        <sec:intercept-url pattern="/actuator/**"  access="hasAuthority('ROLE_ADMIN')" />
+        <sec:intercept-url pattern="/login*"  access="permitAll" />
+        <sec:intercept-url pattern="/logout*"  access="permitAll" />
+        <sec:intercept-url pattern="/**" access="authenticated"/>
+
+        <sec:form-login login-page="/login" />
+        <sec:logout />
+
+        <sec:remember-me key="${rememberMeKey}"  services-ref="rememberMeServices" />
+    </sec:http>
+</beans>
+
+        <!--http-->
+        <!--.authorizeRequests()-->
+        <!--.mvcMatchers(HttpMethod.GET, "/",-->
+        <!--"/css/**", "/js/**", "/images/**",-->
+        <!--"/actuator/health", "/actuator/info",-->
+        <!--"/users/*").permitAll()-->
+        <!--.mvcMatchers("/signup",-->
+        <!--"/forgot-password","/app/forgot-password",-->
+        <!--"/reset-password/*").permitAll()-->
+        <!--.mvcMatchers("/admin/**", "/actuator/**").hasRole("ADMIN")-->
+        <!--.anyRequest().authenticated()-->
+        <!--.and()-->
+        <!--.formLogin().loginPage("/login").permitAll()-->
+        <!--.and().logout().permitAll()-->
+        <!--.and().rememberMe()-->
+        <!--.key(rememberMeKey)-->
+        <!--.rememberMeServices(new TokenBasedRememberMeServices(rememberMeKey,-->
+        <!--userDetailsService));-->

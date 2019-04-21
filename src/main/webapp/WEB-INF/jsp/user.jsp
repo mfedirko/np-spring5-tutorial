@@ -17,9 +17,9 @@
   </div>
   <c:if test="${user.editable}">
 	  <div class="panel-footer">
-	  	<a class="btn btn-link" href="/users/${user.id}/edit">Edit</a>
-	  	<a class="btn btn-link" href="/users/${user.id}/change-password">Change password</a>
-	  	<a class="btn btn-link" href="/users/${user.id}/change-email">Change email</a>
+	  	<a class="btn btn-link" href="${contextPath}/users/${user.id}/edit">Edit</a>
+	  	<a class="btn btn-link" href="${contextPath}/users/${user.id}/change-password">Change password</a>
+	  	<a class="btn btn-link" href="${contextPath}/users/${user.id}/change-email">Change email</a>
 	  </div>
   </c:if>
 </div>
