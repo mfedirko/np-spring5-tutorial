@@ -7,15 +7,18 @@
 
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>
-            classpath:applicationContext.xml
-            classpath:dao-context.xml
-            classpath:entity-context.xml
-            classpath:property-config-context.xml
-            classpath:service-context.xml
-            classpath:mail-context.xml
-            classpath:*-context.xml
-        </param-value>
+            <param-value>
+                classpath:applicationContext.xml
+            </param-value>
+        <!--<param-value>-->
+            <!--classpath:applicationContext.xml-->
+            <!--classpath:dao-context.xml-->
+            <!--classpath:entity-context.xml-->
+            <!--classpath:property-config-context.xml-->
+            <!--classpath:service-context.xml-->
+            <!--classpath:mail-context.xml-->
+            <!--classpath:*-context.xml-->
+        <!--</param-value>-->
     </context-param>
 
     <listener>
