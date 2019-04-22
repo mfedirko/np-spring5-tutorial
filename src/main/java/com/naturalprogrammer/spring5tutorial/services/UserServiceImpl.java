@@ -67,16 +67,19 @@ public class UserServiceImpl implements UserService {
 		initUsers();
 	}
 
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 	public void initUsers(){
-		User u = new User();
-		u.setEmail(adminEmail);
-		u.setName(adminName);
-		u.setId(1L);
-		u.setRoles(Collections.singleton(Role.ADMIN));
-		u.setPassword(passwordEncoder.encode(adminPassword));
-		User saved = userRepository.save(u);
-		if (saved != null) log.debug("Saved admin user successfully");
-		else log.debug("Failed to save initial admin user");
+		if (!userRepository.findByEmail(adminEmail).isPresent()) {
+			User u = new User();
+			u.setEmail(adminEmail);
+			u.setName(adminName);
+			u.setId(1L);
+			u.setRoles(Collections.singleton(Role.ADMIN));
+			u.setPassword(passwordEncoder.encode(adminPassword));
+			User saved = userRepository.save(u);
+			if (saved != null) log.debug("Saved admin user successfully");
+			else log.debug("Failed to save initial admin user");
+		}
 
 	}
 	
