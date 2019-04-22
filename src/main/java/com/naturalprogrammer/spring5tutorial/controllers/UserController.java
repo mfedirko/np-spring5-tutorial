@@ -39,10 +39,10 @@ public class UserController {
 	}
 
 	@GetMapping("/{userId}/resend-verification-mail")
-	public String resendVerificationMail(@PathVariable("userId") Long user,
+	public String resendVerificationMail(@PathVariable("userId") User user,
 			RedirectAttributes redirectAttributes) throws MessagingException {
 
-		userService.resendVerificationMail(userService.fetchById(user));
+		userService.resendVerificationMail(user);
 		MyUtils.flash(redirectAttributes, "success", "verificationMailResent");
 		return "redirect:/";
 	}
@@ -55,13 +55,13 @@ public class UserController {
 	}
 
 	@GetMapping("/{userId}/edit")
-	public String edit(@PathVariable("userId") Long user, Model model) {
-		model.addAttribute(userService.fetchById(user));
+	public String edit(@PathVariable("userId") User user, Model model) {
+		model.addAttribute(user);
 		return "user-edit";
 	}
 
 	@PostMapping("/{userId}/edit")
-	public String update(@PathVariable("userId") Long oldUser,
+	public String update(@PathVariable("userId") User oldUser,
 			@Validated(UpdateValidation.class)
 			@ModelAttribute("user") UserCommand userCommand,
 			BindingResult result,
@@ -70,7 +70,7 @@ public class UserController {
 		if (result.hasErrors())
 			return "user-edit";
 
-		userService.update(userService.fetchById(oldUser), userCommand);
+		userService.update(oldUser, userCommand);
 		MyUtils.flash(redirectAttributes, "success", "updateUserSuccess");
 		return "redirect:/";
 	}
