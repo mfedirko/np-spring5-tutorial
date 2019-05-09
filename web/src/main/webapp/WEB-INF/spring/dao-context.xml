@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jpa="http://www.springframework.org/schema/data/jpa" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:jee="http://www.springframework.org/schema/jee"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd">
+
+    <import resource="property-config-context.xml" />
+
+    <!--<context:property-placeholder location="classpath:datasource-config.properties"/>-->
+    <jpa:repositories base-package="com.naturalprogrammer.spring5tutorial.dao.repositories"/>
+
+    <!-- Enable annotation driven transaction management -->
+    <tx:annotation-driven/>
+    <!-- Configure the transaction manager bean -->
+    <bean id="transactionManager"
+          class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
+    </bean>
+
+     <!--Hikari Datasource - configured in property file -->
+    <bean id="hikariDataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+        <constructor-arg index="0" ref="hikariConfig"/>
+    </bean>
+
+    <!-- Configures the database connection. -->
+    <bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
+        <property name="driverClassName" value="${db.driver}"/>
+        <property name="jdbcUrl" value="${db.url}"/>
+        <property name="username" value="${db.username}"/>
+        <property name="password" value="${db.password}"/>
+    </bean>
+
+    <!-- JNDI - lookup datasource from the container -->
+    <!--<jee:jndi-lookup id="jndiDatasource"-->
+                     <!--jndi-name="jdbc/myDB"-->
+                     <!--expected-type="javax.sql.DataSource" />-->
+
+
+    <!-- Configure the entity manager factory bean -->
+    <bean id="entityManagerFactory"
+          class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="hikariDataSource"/>
+        <property name="jpaVendorAdapter" ref="hibernateJpaVendorAdapter"/>
+        <!-- Set base package of your entities -->
+        <property name="packagesToScan" value="com.naturalprogrammer.spring5tutorial.domain"/>
+        <!-- Set JPA properties -->
+        <property name="jpaProperties">
+            <props>
+                <prop key="hibernate.dialect">${db.hibernate-dialect}</prop>
+                <prop key="hibernate.hbm2ddl.auto">${db.jpa.generate-schema-action}</prop>
+                <!--<prop key=" hibernate.physical_naming_strategy">${db.hibernate.naming_strategy}</prop>-->
+                <prop key="hibernate.show_sql">${db.hibernate.show_sql}</prop>
+
+            </props>
+        </property>
+
+        <!-- Set share cache mode -->
+        <!--<property name="sharedCacheMode" value="ENABLE_SELECTIVE"/>-->
+         <!--Set validation mode -->
+        <!--<property name="validationMode" value="NONE"/>-->
+    </bean>
+
+    <!-- Create default configuration for Hibernate -->
+    <bean id="hibernateJpaVendorAdapter"
+          class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
+
+
+
+</beans>

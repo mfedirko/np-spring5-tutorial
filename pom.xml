@@ -6,7 +6,16 @@
 	<groupId>com.naturalprogrammer</groupId>
 	<artifactId>np-spring5-tutorial</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
+    <modules>
+		<module>web</module>
+		<module>domain</module>
+		<module>service</module>
+		<module>dao</module>
+		<module>integration</module>
+		<module>config</module>
+		<module>security</module>
+	</modules>
+    <packaging>pom</packaging>
 
 	<name>np-spring5-tutorial</name>
 	<description>Demo project for Spring Boot</description>
