@@ -1,24 +1,19 @@
 package com.naturalprogrammer.spring5tutorial.service.services;
 
-import com.naturalprogrammer.spring5tutorial.service.commands.DeleteUserCommand;
+import com.naturalprogrammer.spring5tutorial.service.command.commands.DeleteUserCommand;
 import javax.mail.MessagingException;
 
 //import org.springframework.boot.context.event.ApplicationReadyEvent;
 
-import com.naturalprogrammer.spring5tutorial.service.commands.ForgotPasswordCommand;
-import com.naturalprogrammer.spring5tutorial.service.commands.UserCommand;
+
 import com.naturalprogrammer.spring5tutorial.domain.User;
 
 public interface UserService {
 
-	void signup(UserCommand userCommand);
 //	void afterApplicationReady(ApplicationReadyEvent event);
-	void verify(String verificationCode);
-	void resendVerificationMail(User user) throws MessagingException;
-	void forgotPassword(ForgotPasswordCommand forgotPasswordCommand);
-	void resetPassword(String resetPasswordCode, String password);
+//	void resendVerificationMail(User user) throws MessagingException;
 	User fetchById(Long userId);
-	void update(User oldUser, UserCommand userCommand);
 	boolean verifyPassword(String rawPass);
-	void deleteUser(DeleteUserCommand command);
+	void sendVerificationMail(User u) throws  javax.mail.MessagingException;
+//	void mailResetPasswordLink(User user);
 }

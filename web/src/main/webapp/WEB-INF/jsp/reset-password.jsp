@@ -6,7 +6,7 @@
     <h3 class="panel-title">Reset your password</h3>
   </div>
   <div class="panel-body">
-	<form:form modelAttribute="resetPasswordCommand">
+	<form:form modelAttribute="resetPasswordRequest">
 	
 	  <form:errors cssClass="error"/>
 	  

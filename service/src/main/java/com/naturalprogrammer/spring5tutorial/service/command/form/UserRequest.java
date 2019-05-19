@@ -1,24 +1,44 @@
-package com.naturalprogrammer.spring5tutorial.service.commands;
+package com.naturalprogrammer.spring5tutorial.service.command.form;
 
+import com.naturalprogrammer.spring5tutorial.service.command.Request;
 import java.util.Collection;
 import java.util.HashSet;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.sql.Update;
 import org.hibernate.validator.constraints.NotBlank;
 
 import com.naturalprogrammer.spring5tutorial.domain.User;
 import com.naturalprogrammer.spring5tutorial.domain.User.Role;
 import com.naturalprogrammer.spring5tutorial.service.validation.Password;
 import com.naturalprogrammer.spring5tutorial.service.validation.UniqueEmail;
+import org.hibernate.validator.constraints.NotEmpty;
 
-public class UserCommand {
-	
+public class UserRequest implements Request {
+
+	@Override
+	public String getObjectName() {
+		return "createUser";
+	}
+
 	public static interface SignupValidation {}
 	public static interface UpdateValidation {}
-	
-	
+
+	@NotNull(groups = UpdateValidation.class)
+	private Long originalUserID;
+
+	public Long getOriginalUserID() {
+		return originalUserID;
+	}
+
+	public void setOriginalUserID(long originalUserID) {
+		this.originalUserID = originalUserID;
+	}
+
 	@UniqueEmail(groups = SignupValidation.class)
+	@NotEmpty(groups = SignupValidation.class)
 	private String email;
 	
 	@NotBlank(groups = {SignupValidation.class, UpdateValidation.class})

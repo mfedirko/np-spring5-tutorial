@@ -1,12 +1,15 @@
 package com.naturalprogrammer.spring5tutorial.web.controllers;
 
+import com.naturalprogrammer.spring5tutorial.service.command.commands.DeleteUserCommand;
+import com.naturalprogrammer.spring5tutorial.service.command.executor.ServiceReceiver;
 import com.naturalprogrammer.spring5tutorial.web.aop.NeedsConfirmPassword;
-import com.naturalprogrammer.spring5tutorial.service.commands.ConfirmPasswordCommand;
-import com.naturalprogrammer.spring5tutorial.service.commands.DeleteUserCommand;
+import com.naturalprogrammer.spring5tutorial.service.command.form.ConfirmPasswordRequest;
+import com.naturalprogrammer.spring5tutorial.service.command.form.DeleteUserRequest;
 import com.naturalprogrammer.spring5tutorial.service.services.UserService;
 import com.naturalprogrammer.spring5tutorial.service.utils.MyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,11 +31,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class DeleteUserController  {
     private static Logger log = LoggerFactory.getLogger(DeleteUserController.class);
 
-    private UserService userService;
+    @Autowired
+    private ServiceReceiver serviceReceiver;
 
-    public DeleteUserController(UserService userService){
-        this.userService = userService;
-    }
 
     private static final String CONFIRM_DELETE_VIEW = "confirmDelete";
     private static final String CONFIRM_PASS_VIEW = "passwordConfirm";
@@ -40,13 +41,14 @@ public class DeleteUserController  {
     @GetMapping
     public String showVerifyPassword(Model model) {
         if (!model.containsAttribute("deleteForm")) {
-            model.addAttribute("deleteForm", new DeleteUserCommand());
+            model.addAttribute("deleteForm", new DeleteUserRequest());
         }
         return CONFIRM_PASS_VIEW;
     }
 
     @PostMapping( params = {"step=one"})
-    public String stepOneConfirmPassword(@Validated(ConfirmPasswordCommand.PasswordConfirmedStep.class) @ModelAttribute("deleteForm") DeleteUserCommand command,
+    public String stepOneConfirmPassword(//@Validated(ConfirmPasswordRequest.PasswordConfirmedStep.class)
+                                         @ModelAttribute("deleteForm") DeleteUserRequest command,
                                          BindingResult bindingResult, ModelMap modelMap){
         if (bindingResult.hasErrors()){
             return CONFIRM_PASS_VIEW;
@@ -56,7 +58,8 @@ public class DeleteUserController  {
 
     @NeedsConfirmPassword
     @PostMapping( params = {"step=confirm"})
-    public String confirmDeleteView(@Validated({DeleteUserCommand.DeleteConfirmedStep.class, ConfirmPasswordCommand.PasswordConfirmedStep.class}) @ModelAttribute("deleteForm") DeleteUserCommand deleteUserCommand,
+    public String confirmDeleteView(//@Validated({DeleteUserRequest.DeleteConfirmedStep.class, ConfirmPasswordRequest.PasswordConfirmedStep.class})
+                                        @ModelAttribute("deleteForm") DeleteUserRequest deleteUserRequest,
                                     BindingResult bindingResult,
                                     ModelMap modelMap,
                                     RedirectAttributes redirectAttributes,
@@ -68,7 +71,7 @@ public class DeleteUserController  {
         }
         else {
             try {
-                userService.deleteUser(deleteUserCommand);
+                serviceReceiver.doRequest("deleteUserCommand",deleteUserRequest,bindingResult);
             } catch (Throwable e) {
                 e.printStackTrace();
                 log.error(e.getMessage());

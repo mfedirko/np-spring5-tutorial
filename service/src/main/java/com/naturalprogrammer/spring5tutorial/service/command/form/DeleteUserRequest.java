@@ -1,8 +1,9 @@
-package com.naturalprogrammer.spring5tutorial.service.commands;
+package com.naturalprogrammer.spring5tutorial.service.command.form;
 
+import com.naturalprogrammer.spring5tutorial.service.command.Request;
 import javax.validation.constraints.AssertTrue;
 
-public class DeleteUserCommand  extends ConfirmPasswordCommand{
+public class DeleteUserRequest extends ConfirmPasswordRequest{
 
     public static interface DeleteConfirmedStep {}
 

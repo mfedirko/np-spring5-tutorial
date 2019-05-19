@@ -6,7 +6,7 @@
     <h3 class="panel-title">Forgot password?</h3>
   </div>
   <div class="panel-body">
-	<form:form modelAttribute="forgotPasswordCommand">
+	<form:form modelAttribute="forgotPasswordRequest">
 	
 	  <form:errors cssClass="error"/>
 	  

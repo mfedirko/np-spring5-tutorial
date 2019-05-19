@@ -1,5 +1,6 @@
 package com.naturalprogrammer.spring5tutorial.service.utils;
 
+import com.naturalprogrammer.spring5tutorial.service.exception.GeneralServiceException;
 import java.util.Optional;
 
 import java.util.Set;
@@ -33,6 +34,24 @@ public class MyUtils {
 
 		return messageSource.getMessage(messageKey, args,
 				LocaleContextHolder.getLocale());
+	}
+
+	public static boolean isAdminOrSelfLoggedIn(User user) {
+
+		Optional<User> currentUser = MyUtils.currentUser();
+
+		if (!currentUser.isPresent())
+			return false;
+
+		User cUser = currentUser.get();
+
+		if (cUser.getRoles().contains(User.Role.ADMIN))
+			return true;
+
+		if (cUser.getId().equals(user.getId()))
+			return true;
+
+		return false;
 	}
     public static String getMessage(String messageKey, String defaultMessage, Object... args) {
         try {
@@ -110,6 +129,6 @@ public class MyUtils {
 	public static void validate(boolean valid, String messageKey, Object ... messageArgs) {
 		
 		if (!valid)
-			throw new RuntimeException(MyUtils.getMessage(messageKey,"", messageArgs));
+			throw new GeneralServiceException(MyUtils.getMessage(messageKey,"", messageArgs));
 	}
 }

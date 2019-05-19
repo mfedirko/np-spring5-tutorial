@@ -1,8 +1,11 @@
 package com.naturalprogrammer.spring5tutorial.web.controllers.exception;
 
+import com.naturalprogrammer.spring5tutorial.service.exception.GeneralServiceException;
+import com.naturalprogrammer.spring5tutorial.service.exception.ServiceValidationException;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 
+import javax.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -27,7 +30,24 @@ class GlobalDefaultExceptionHandler {
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }
     }
+    @ExceptionHandler(ServiceValidationException.class)
+    public ModelAndView handleServiceValidationException(ServiceValidationException ex,
+                                                         HttpServletRequest req){
+        ModelAndView mav = defaultErrorHandler(req,ex);
+        mav.getModelMap().addAttribute("error",ex.getErrors());
+        mav.addObject("status",400);
 
+        return mav;
+    }
+    @ExceptionHandler(GeneralServiceException.class)
+    public ModelAndView handleServiceValidationException(GeneralServiceException ex,
+                                                         HttpServletRequest req){
+        ModelAndView mav = defaultErrorHandler(req,ex);
+        mav.getModelMap().addAttribute("error",ex.getLocalizedMessage());
+        mav.addObject("status",400);
+
+        return mav;
+    }
     @ExceptionHandler( NoHandlerFoundException.class)
     public ModelAndView notFound(NoHandlerFoundException ex) throws Exception {
         // Otherwise setup and send the user to a default error-view.
@@ -45,7 +65,7 @@ class GlobalDefaultExceptionHandler {
     }
 
     @ExceptionHandler(value = Throwable.class)
-    public ModelAndView defaultErrorHandler(HttpServletRequest req, Exception e) throws Exception {
+    public ModelAndView defaultErrorHandler(HttpServletRequest req, Throwable e)  {
 
         HttpStatus status = getStatus(req);
         // Otherwise setup and send the user to a default error-view.

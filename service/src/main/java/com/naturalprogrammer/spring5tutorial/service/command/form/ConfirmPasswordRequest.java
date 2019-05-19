@@ -1,8 +1,14 @@
-package com.naturalprogrammer.spring5tutorial.service.commands;
+package com.naturalprogrammer.spring5tutorial.service.command.form;
 
+import com.naturalprogrammer.spring5tutorial.service.command.Request;
 import com.naturalprogrammer.spring5tutorial.service.validation.PasswordVerified;
 
-public class ConfirmPasswordCommand implements HasPassword {
+public class ConfirmPasswordRequest implements HasPassword, Request {
+
+    @Override
+    public String getObjectName() {
+        return "confirmPassword";
+    }
 
     public static interface PasswordConfirmedStep {}
     @Override
