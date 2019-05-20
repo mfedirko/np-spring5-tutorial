@@ -17,7 +17,7 @@ import org.springframework.validation.beanvalidation.SpringValidatorAdapter;
 public abstract class BaseCommand<IN extends Request,OUT> implements Command<IN, OUT> {
 
     private static final Logger LOG = LoggerFactory.getLogger(BaseCommand.class);
-    private Errors errors;
+    private ThreadLocal<Errors> errors = new ThreadLocal<>();
 
     protected boolean throwValidationExceptionOnError = true;
 
@@ -27,10 +27,11 @@ public abstract class BaseCommand<IN extends Request,OUT> implements Command<IN,
 
 
     protected Errors getErrors(IN request){
-        if (errors == null) {
+        Errors localError = errors.get();
+        if (localError == null) {
             return new BeanPropertyBindingResult(request, request.getObjectName());
         }
-        return errors;
+        return localError;
     }
 
     protected boolean validate(IN request){
@@ -59,15 +60,17 @@ public abstract class BaseCommand<IN extends Request,OUT> implements Command<IN,
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public OUT execute(IN request) {
-        if (validate(request))
+        if (validate(request)) {
+            setErrors(null);
             return proceedToExecute(request);
+        }
         return null;
     }
     protected abstract OUT proceedToExecute(IN request);
 
     @Override
     public void setErrors(Errors errors) {
-        this.errors = errors;
+        this.errors.set(errors);
         if (errors != null) setThrowValidationExceptionOnError(false);
     }
 
